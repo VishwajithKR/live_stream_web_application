@@ -1,5 +1,4 @@
 import { db } from "../lib/db.js";
-import { searchUsers } from "../modals/userModel.js";
 
 
 export const allUsers = async (req, res) => {
@@ -68,12 +67,3 @@ export const getFriendList = async (req, res) => {
   }
 };
 
-export const globalSearch = async (req, res) => {
-  const { keyword } = req.query;
-  try {
-    const results = await searchUsers(keyword, req.userId);
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};

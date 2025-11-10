@@ -1,27 +1,20 @@
 import { db } from "../lib/db.js";
 
-export const createUser = async (name, email, password) => {
-  const [rows] = await db.query(
-    "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-    [name, email, password]
-  );
-  return rows;
-};
-
-export const findUserByEmail = async (email) => {
-  const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-  return rows[0];
-};
-
-export const findUserById = async (id) => {
-  const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
-  return rows[0];
-};
-
-export const searchUsers = async (keyword, userId) => {
-  const [rows] = await db.query(
-    "SELECT id, name, email FROM users WHERE (name LIKE ? OR email LIKE ?) AND id != ?",
-    [`%${keyword}%`, `%${keyword}%`, userId]
-  );
-  return rows;
+export const createUserTable = async () => {
+  try {
+    await db.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        email VARCHAR(100) UNIQUE NOT NULL,
+        mobile VARCHAR(12) UNIQUE NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        current_token VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    console.log("✅ users table ready");
+  } catch (err) {
+    console.error("❌ users table creation failed:", err.message);
+  }
 };
