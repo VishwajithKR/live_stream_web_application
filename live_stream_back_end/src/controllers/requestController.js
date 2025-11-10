@@ -13,7 +13,6 @@ export const sendFriendRequest = async (req, res) => {
       return res.status(400).json({ message: "You cannot send a request to yourself" });
     }
 
-    // Check if target user exists
     const [targetUser] = await db.query("SELECT id FROM users WHERE id = ?", [send_request_id]);
     if (targetUser.length === 0) {
       return res.status(404).json({ message: "Target user not found" });
