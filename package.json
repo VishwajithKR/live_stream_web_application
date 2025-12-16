@@ -1,0 +1,17 @@
+{
+  "name": "y",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm install --prefix live_stream_back_end && npm install --prefix live_stream_front_end && npm run build --prefix live_stream_front_end",
+    "start": "npm run start --prefix live_stream_back_end",
+    "dev": "concurrently \"npm run dev --prefix live_stream_back_end\" \"npm run dev --prefix live_stream_front_end\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}
