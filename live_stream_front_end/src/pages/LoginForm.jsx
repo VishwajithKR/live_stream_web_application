@@ -1,31 +1,60 @@
 import { useState } from "react";
-import { getPrivateSocket, publicSocket } from "../socket";
 import { useNavigate, Link } from "react-router-dom";
+import { setLogin } from "../redux/slice/userSlice";
+import { useDispatch } from "react-redux";
+import axiosInstance from "../api/axiosInstance";
 
-export default function LoginForm({ onLogin }) {
+export default function LoginForm() {
   const [form, setForm] = useState({ email: "", password: "" });
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  // const handleLogin = (e) => {
+  //   e.preventDefault();
+  //   // setLoading(true);
+  //   setMessage("");
+  //   dispatch(setLogin({
+  //     token:"passed_token_12345",
+  //     user: "John Doe",
+  //     id: "user_12345",
+  //   }));
+  //   console.log("first")
+  // };
 
-    publicSocket.emit("auth:login", form, (res) => {
-      setLoading(false);
-      setMessage(res.message);
-      if (res.status) {
-        const privateSocket = getPrivateSocket(res.token);
-        onLogin(res.token, privateSocket);
-        navigate("/profile");
-      }
-    });
+   const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axiosInstance.post("/api/login", form);
+
+      // assuming backend returns token + user data
+      dispatch(
+        setLogin({
+          token: res.data.token,
+          user: res.data.user,
+          id: res.data.user._id,
+        })
+      );
+
+      // optional: persist login
+      localStorage.setItem(
+        "userData",
+        JSON.stringify({
+          token: res.data.token,
+          user: res.data.user,
+          id: res.data.user._id,
+        })
+      );
+    } catch (err) {
+      console.error(err.response?.data?.message || err.message);
+    }
   };
+
 
   return (
     <div className="max-w-sm mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
@@ -50,9 +79,8 @@ export default function LoginForm({ onLogin }) {
         <button
           type="submit"
           className="w-full bg-green-600 text-white rounded-lg py-2 hover:bg-green-700 transition"
-          disabled={loading}
         >
-          {loading ? "Logging in..." : "Login"}
+          Login
         </button>
       </form>
       {message && <p className="text-center text-sm mt-3 text-gray-700">{message}</p>}
