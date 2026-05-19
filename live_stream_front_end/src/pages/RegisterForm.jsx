@@ -1,6 +1,5 @@
 // src/pages/RegisterForm.js
 import { useState } from "react";
-import { publicSocket } from "../socket";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function RegisterForm() {
@@ -23,11 +22,6 @@ export default function RegisterForm() {
     setLoading(true);
     setMessage("");
 
-    publicSocket.emit("auth:register", form, (res) => {
-      setLoading(false);
-      setMessage(res.message);
-      if (res.status) navigate("/login");
-    });
   };
 
   return (
@@ -47,7 +41,7 @@ export default function RegisterForm() {
         ))}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white rounded-lg py-2 hover:bg-blue-700 transition"
+          className="w-full bg-green-600 text-white rounded-lg py-2 hover:bg-green-700 transition"
           disabled={loading}
         >
           {loading ? "Registering..." : "Register"}
@@ -56,7 +50,7 @@ export default function RegisterForm() {
       {message && <p className="text-center text-sm mt-3 text-gray-700">{message}</p>}
       <p className="text-center mt-4 text-sm">
         Already have an account?{" "}
-        <Link to="/login" className="text-green-600 font-semibold">
+        <Link to="/login" className="text-blue-600 font-semibold">
           Login
         </Link>
       </p>
